@@ -1,0 +1,107 @@
+# =============================================================================
+# Central configuration for the Airline Delay Intelligence pipeline.
+# Every path, threshold and lookup lives here so that nothing is hard-coded
+# in the source code. Override with:  python scripts/run_pipeline.py --config <file>
+# =============================================================================
+
+paths:
+  raw_data: data/raw/flight_random_1million.csv      # Kaggle "flight-data-2024" extract
+  interim_dir: data/interim                          # intermediate artefacts
+  processed_data: data/processed/flights_clean.parquet  # analysis-ready dataset
+  figures_dir: reports/figures                       # interactive HTML charts
+  tables_dir: reports/tables                         # CSV summary tables
+  report_file: reports/insights.md                   # auto-generated insight report
+  data_quality_report: reports/data_quality_report.json
+
+# -----------------------------------------------------------------------------
+# Business / domain thresholds
+# -----------------------------------------------------------------------------
+business_rules:
+  # US DOT definition: a flight is "delayed" when it arrives >= 15 min late.
+  delay_threshold_minutes: 15
+  # Rankings (airport / route / airline) are only trusted above this sample size;
+  # otherwise a route with 2 flights and one long delay tops every leaderboard.
+  min_flights_airport: 500
+  min_flights_route: 100
+  min_flights_airline: 1000
+  # Weekend definition (BTS day_of_week: 1 = Monday ... 7 = Sunday)
+  weekend_days: [6, 7]
+  # Distance bands (miles) used to classify haul length
+  haul_bins: [0, 500, 1500, 100000]
+  haul_labels: ["Short (<500 mi)", "Medium (500-1500 mi)", "Long (>1500 mi)"]
+  # Part-of-day bands on *scheduled* departure hour
+  daypart_bins: [-1, 5, 11, 16, 20, 23]
+  daypart_labels: ["Red-eye (00-05)", "Morning (06-11)", "Afternoon (12-16)", "Evening (17-20)", "Night (21-23)"]
+
+# -----------------------------------------------------------------------------
+# Data-cleaning behaviour
+# -----------------------------------------------------------------------------
+cleaning:
+  drop_constant_columns: true        # e.g. `year` has a single value in this extract
+  drop_duplicates: true
+  impute_timestamps_for_completed_flights: true   # rebuild missing actual times from components
+  # Plausibility bounds used by the data-quality checks (minutes / miles)
+  bounds:
+    dep_delay: [-120, 4320]      # up to 72 h: multi-day delays exist in the real data (max ~56 h)
+    arr_delay: [-150, 4320]
+    taxi_out: [0, 400]
+    taxi_in: [0, 400]
+    air_time: [0, 1500]
+    distance: [0, 6000]
+
+# -----------------------------------------------------------------------------
+# Outlier policy (profiled on the real 1M-row sample)
+# -----------------------------------------------------------------------------
+# Principle: NOTHING is deleted. Delay data is heavy-tailed and extreme delays are real events
+# (overnight / multi-day disruptions), so outliers are FLAGGED and the analysis uses robust statistics.
+#  * Extreme delays  -> flagged (is_extreme_delay); kept in all totals; means are reported winsorized as well as raw.
+#  * Physical errors -> flagged (speed, taxi, schedule-vs-actual time inconsistencies) for review.
+outliers:
+  extreme_delay_minutes: 360        # >= 6 h late = "extreme" (domain rule)
+  winsor_lower_pct: 0.5             # caps for *_w columns are computed from the data at run time
+  winsor_upper_pct: 99.5
+  speed_mph_bounds: [50, 700]       # implied block speed = distance / air_time; outside -> data-quality flag
+  taxi_out_max: 180                 # minutes
+  taxi_in_max: 120
+  severity_bins: [15, 60, 180, 360, 100000]
+  severity_labels: ["15-59 min", "60-179 min", "180-359 min", "360+ min (extreme)"]
+
+# -----------------------------------------------------------------------------
+# Visualisation
+# -----------------------------------------------------------------------------
+visualization:
+  scatter_sample_size: 25000     # scatter/violin plots are sampled to keep HTML light
+  random_state: 42
+  template: plotly_white
+
+# -----------------------------------------------------------------------------
+# Lookups
+# -----------------------------------------------------------------------------
+lookups:
+  airline_names:
+    AA: American Airlines
+    AS: Alaska Airlines
+    B6: JetBlue Airways
+    DL: Delta Air Lines
+    F9: Frontier Airlines
+    G4: Allegiant Air
+    HA: Hawaiian Airlines
+    MQ: Envoy Air
+    NK: Spirit Airlines
+    OH: PSA Airlines
+    OO: SkyWest Airlines
+    UA: United Airlines
+    WN: Southwest Airlines
+    YX: Republic Airways
+    9E: Endeavor Air
+  # BTS cancellation reason codes (kept as a feature: it is the *reason* for a cancellation,
+  # NaN for non-cancelled flights by design, NOT a low-quality column)
+  cancellation_codes:
+    A: Carrier
+    B: Weather
+    C: National Air System
+    D: Security
+  month_names: [Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec]
+  day_names: {1: Mon, 2: Tue, 3: Wed, 4: Thu, 5: Fri, 6: Sat, 7: Sun}
+  seasons: {12: Winter, 1: Winter, 2: Winter, 3: Spring, 4: Spring, 5: Spring,
+            6: Summer, 7: Summer, 8: Summer, 9: Autumn, 10: Autumn, 11: Autumn}

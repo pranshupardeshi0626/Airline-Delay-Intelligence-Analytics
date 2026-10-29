@@ -1,0 +1,5 @@
+severity,flights,delay_minutes,pct_of_delayed_flights,pct_of_delay_minutes
+15-59 min,132813,4106284.0,64.72,28.0
+60-179 min,58118,5788064.0,28.32,39.47
+180-359 min,10933,2606588.0,5.33,17.77
+360+ min (extreme),3332,2164779.0,1.62,14.76

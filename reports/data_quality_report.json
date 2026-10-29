@@ -1,0 +1,44 @@
+{
+  "rows_raw": 1000000,
+  "rows_clean": 1000000,
+  "completed_flights": 984033,
+  "cancelled_flights": 13608,
+  "diverted_flights": 2359,
+  "completed_flights_nulls": {
+    "dep_time": 0,
+    "dep_delay": 0,
+    "arr_time": 0,
+    "arr_delay": 0,
+    "taxi_out": 0,
+    "taxi_in": 0,
+    "air_time": 0
+  },
+  "out_of_bounds": {
+    "dep_delay": 0,
+    "arr_delay": 0,
+    "taxi_out": 0,
+    "taxi_in": 1,
+    "air_time": 0,
+    "distance": 0
+  },
+  "cancelled_and_diverted": 0,
+  "delay_cause_sum_mismatch_pct": 0.0,
+  "outliers": {
+    "extreme_delay_threshold_min": 360,
+    "extreme_delay_flights": 3332,
+    "extreme_delay_pct_of_completed": 0.339,
+    "extreme_delay_share_of_positive_delay_minutes_pct": 13.84,
+    "flights_over_24h_late": 74,
+    "max_arr_delay_min": 3359.0,
+    "mean_arr_delay_raw": 7.11,
+    "mean_arr_delay_winsorized": 5.9,
+    "median_arr_delay": -6.0,
+    "winsor_caps_arr_delay": [
+      -41.0,
+      297.0
+    ],
+    "speed_anomalies": 4,
+    "taxi_anomalies": 162,
+    "time_inconsistent_records": 23
+  }
+}
