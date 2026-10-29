@@ -1,0 +1,4 @@
+haul,flights,cancelled,diverted,delayed,completed,avg_dep_delay,avg_arr_delay,avg_dep_delay_w,avg_arr_delay_w,median_arr_delay,extreme_delays,p90_arr_delay,cancel_rate_pct,diverted_rate_pct,delay_rate_pct,ontime_pct
+Long (>1500 mi),129227,1531,484,27126.0,127212,13.48,5.62,11.99,4.29,-6.0,461,41.0,1.18,0.37,21.32,78.68
+Medium (500-1500 mi),526662,7405,1373,111559.0,517884,13.44,7.75,12.2,6.53,-6.0,1775,46.0,1.41,0.26,21.54,78.46
+Short (<500 mi),344111,4672,502,66511.0,338937,11.13,6.68,9.98,5.53,-6.0,1096,41.0,1.36,0.15,19.62,80.38

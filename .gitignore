@@ -1,0 +1,16 @@
+# Data (large). Reports in reports/ are small and intentionally committed.
+data/raw/*
+data/interim/*
+data/processed/*
+!data/**/.gitkeep
+
+# Python / tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+*.egg-info/
+.venv/
+.ipynb_checkpoints/
+.DS_Store

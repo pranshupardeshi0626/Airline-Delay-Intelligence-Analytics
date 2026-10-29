@@ -1,0 +1,16 @@
+airline_name,Carrier,Weather,NAS,Security,Late Aircraft,delayed_flights
+Alaska Airlines,29.16,3.19,27.11,0.61,39.93,7462
+Allegiant Air,34.0,11.98,18.17,0.15,35.7,3505
+American Airlines,33.04,5.67,13.21,0.19,47.89,35653
+Delta Air Lines,47.3,4.67,18.62,0.06,29.35,24367
+Endeavor Air,30.48,6.56,22.64,0.0,40.32,4360
+Envoy Air,23.4,11.03,20.57,0.15,44.84,8298
+Frontier Airlines,26.56,2.06,17.8,0.0,53.59,8213
+Hawaiian Airlines,58.87,2.22,2.54,0.55,35.82,1667
+JetBlue Airways,39.83,2.49,20.27,0.22,37.19,8523
+PSA Airlines,29.0,8.55,13.51,0.15,48.79,6789
+Republic Airways,26.41,8.23,32.32,0.07,32.98,5892
+SkyWest Airlines,49.91,15.57,15.44,0.26,18.82,19734
+Southwest Airlines,27.93,2.47,17.57,0.22,51.81,41043
+Spirit Airlines,27.13,2.46,43.05,0.51,26.86,8561
+United Airlines,29.21,4.87,24.63,0.01,41.28,21129

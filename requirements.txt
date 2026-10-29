@@ -1,0 +1,6 @@
+# Runtime dependencies (pinned to tested minor versions)
+pandas>=2.2
+numpy>=1.26
+plotly>=5.20
+pyarrow>=15.0
+PyYAML>=6.0
