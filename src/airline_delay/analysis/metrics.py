@@ -107,7 +107,7 @@ def group_kpis(df: pd.DataFrame, by: str | Iterable[str], cfg: Dict[str, Any],
         work[c] = work[c].astype(float)
     # IMPORTANT: the flags are stored as int8 to save memory; summing int8 per group
     # silently overflows (>127) and produced negative cancel rates. Widen before aggregating.
-    for c in ("cancelled", "diverted"):
+    for c in ("cancelled", "diverted", "is_extreme_delay"):
         work[c] = work[c].astype("int64")
 
     g = work.groupby(by, observed=True, dropna=True)

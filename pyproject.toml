@@ -11,7 +11,8 @@ requires-python = ">=3.10"
 dependencies = ["pandas>=2.2", "numpy>=1.26", "plotly>=5.20", "pyarrow>=15.0", "PyYAML>=6.0"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.5", "jupyter>=1.0", "nbformat>=5.9"]
+app = ["streamlit>=1.50"]
+dev = ["pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.5", "jupyter>=1.0", "nbformat>=5.9", "streamlit>=1.50"]
 
 [project.scripts]
 airline-delay = "airline_delay.pipeline:run_pipeline"
@@ -30,3 +31,6 @@ target-version = "py310"
 [tool.ruff.lint]
 select = ["E", "F", "I", "B"]
 ignore = ["E402"]   # scripts add src/ to sys.path before importing the package
+
+[tool.ruff.lint.per-file-ignores]
+"app/*" = ["E501", "E402"]   # UI strings are long; the app inserts sys.path before importing local modules
