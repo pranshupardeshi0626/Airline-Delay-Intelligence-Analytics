@@ -1,0 +1,15 @@
+# Streamlit theme - "Control Tower" palette (sky blue on cloud white, navy sidebar via CSS)
+[theme]
+base = "light"
+primaryColor = "#1E88E5"
+backgroundColor = "#F3F8FD"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#0B1F3A"
+font = "sans serif"
+
+[server]
+headless = true
+maxUploadSize = 5
+
+[browser]
+gatherUsageStats = false

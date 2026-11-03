@@ -45,7 +45,8 @@ make install                      # pip install -e ".[dev]"
 make sample
 
 make run                          # clean -> features -> KPIs -> charts -> report
-make test                         # 26 tests
+make test                         # 31 tests (incl. headless dashboard tests)
+make dashboard                    # launch the interactive Streamlit dashboard
 ```
 
 Outputs after `make run`:
@@ -60,11 +61,49 @@ Outputs after `make run`:
 
 Useful flags: `python scripts/run_pipeline.py --nrows 100000 --skip-figures --config config/config.yaml`  (full 1M-row run ≈ 25 s)
 
+## 🖥️ Interactive dashboard (Streamlit)
+
+An airline "control tower" themed dashboard on top of the same tested KPI code as the pipeline:
+
+```bash
+make run          # once: builds data/processed/flights_clean.parquet
+make dashboard    # or: streamlit run app/streamlit_app.py   -> http://localhost:8501
+```
+
+![Control Tower](docs/images/dashboard_control_tower.png)
+
+| Page | What you can do |
+|---|---|
+| 🛫 **Control Tower** | Boarding-pass KPI cards (vs network), on-time gauge, status mix, seasonality, delay causes, outlier impact |
+| 🏢 **Airlines** | Rank by 7 metrics with **95 % confidence whiskers**, reliability scorecard, cause mix, CSV download |
+| 🗺️ **Airports & Routes** | US airport map (bubble = volume, colour = metric), top-N rankings, departure-board of troubled routes |
+| 🕒 **Time Patterns** | Hourly profile, month/weekday × hour heatmaps (3 metrics), weekday/day-part/season, daily timeline with event spikes |
+| 🔬 **Delay Anatomy** | Cause mix by hour/month/airline/day-part (cascade effect), carry-over KPIs, distributions (log toggle), correlations |
+| 🌪️ **Cancellations & Events** | Reasons, airline × month heatmap, disruption-day board, **drill into any date** |
+| 🧭 **Route Finder** | Pick origin → destination: KPIs vs network, airline comparison, best/worst hours, monthly trend |
+| ℹ️ **About & Method** | Business problem, KPI definitions, data quality, limitations |
+
+**Global sidebar filters** (airline, month range, weekday, part of day, haul, origin airport) apply to every page, plus two
+outlier switches: *exclude extreme delays (≥ 6 h)* and *winsorized vs raw averages*. All tables export to CSV.
+
+<details><summary>More screenshots</summary>
+
+![Time patterns](docs/images/dashboard_time_patterns.png)
+![Delay anatomy](docs/images/dashboard_delay_anatomy.png)
+![Cancellations](docs/images/dashboard_cancellations.png)
+</details>
+
+Notes: the outline map and Google fonts load from the internet; without it use the *Plain lat/lon* map option (fonts fall back to the
+system sans-serif). Airport coordinates are approximate and hand-entered for the busiest airports (`app/airports_geo.py`).
+Interactive response is ~1 s per click on the full 1M rows (data cached, filters keyed and memoised).
+
 ## 🗂️ Project structure
 
 ```
 airline-delay-intelligence/
 ├── FINDINGS.md                   # findings, recommendations, limitations, roadmap
+├── app/                          # Streamlit dashboard (streamlit_app.py · views.py · data.py · theme.py · airports_geo.py)
+├── .streamlit/config.toml        # dashboard theme
 ├── config/config.yaml            # paths, thresholds, outlier policy, lookups - nothing hard-coded in code
 ├── data/{raw,interim,processed}/ # raw is git-ignored
 ├── docs/
@@ -134,7 +173,7 @@ Correlation of delay drivers.
 
 ## ✅ Quality engineering
 
-* 26 tests, including outlier-policy tests and a regression test for an int8-overflow bug that produced negative cancellation rates.
+* 31 tests, including headless tests that render every dashboard page and exercise filters, reset and empty selections, outlier-policy tests and a regression test for an int8-overflow bug that produced negative cancellation rates.
 * Schema validation, plausibility-bound checks and cause-sum consistency in `data_quality_report.json`.
 * Linted with `ruff`; CI on Python 3.10 and 3.12.
 * Reproducible: fixed seeds, config-driven, no notebook execution-order dependencies.

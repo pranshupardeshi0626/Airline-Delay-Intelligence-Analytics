@@ -107,7 +107,7 @@ def group_kpis(df: pd.DataFrame, by: str | Iterable[str], cfg: Dict[str, Any],
         work[c] = work[c].astype(float)
     # IMPORTANT: the flags are stored as int8 to save memory; summing int8 per group
     # silently overflows (>127) and produced negative cancel rates. Widen before aggregating.
-    for c in ("cancelled", "diverted"):
+    for c in ("cancelled", "diverted", "is_extreme_delay"):
         work[c] = work[c].astype("int64")
 
     g = work.groupby(by, observed=True, dropna=True)
@@ -189,7 +189,10 @@ def cancellation_reasons(df: pd.DataFrame) -> pd.DataFrame:
     """Count and share of cancellations by BTS reason code."""
     if "cancellation_reason" not in df.columns:
         return pd.DataFrame(columns=["cancellation_reason", "flights", "share_pct"])
-    c = df.loc[df["cancelled"] == 1, "cancellation_reason"].fillna("Unknown").value_counts()
+    # astype(object) first: fillna() with a new label raises on a Categorical in pandas 2.x
+    # (the dashboard stores this column as categorical), whereas pandas 3 tolerates it.
+    reasons = df.loc[df["cancelled"] == 1, "cancellation_reason"].astype(object).fillna("Unknown")
+    c = reasons.value_counts()
     res = c.rename_axis("cancellation_reason").reset_index(name="flights")
     res["share_pct"] = (100 * res["flights"] / res["flights"].sum()).round(2)
     return res

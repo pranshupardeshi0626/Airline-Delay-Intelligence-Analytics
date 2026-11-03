@@ -177,7 +177,7 @@ The new pipeline normalises `2400` → `0`, so no imputation is needed on this d
 
 **Engineering**
 12. Pandas in-memory design is right-sized for 1M rows (~25 s end to end) but **has not been tested on the full 7M rows**; that would need DuckDB/Polars or chunked processing.
-13. Outputs are static HTML/CSV/markdown: **no dashboard, scheduler, data-versioning or monitoring**.
+13. **No scheduler, data-versioning or monitoring.** A read-only Streamlit dashboard (`app/`) sits on the batch output; its map uses approximate, hand-entered airport coordinates for the busiest airports only, and filters are computed in memory (fine for 1M rows, not for 7M).
 
 ---
 
@@ -194,7 +194,7 @@ The new pipeline normalises `2400` → `0`, so no imputation is needed on this d
 | Medium | **Event/anomaly detection** on the daily series (change-point or robust z-score) with automated incident reports | Systematically find IROPS days |
 | Medium | Run on the **full 7M rows** with DuckDB/Polars + Parquet partitioning; multi-year (2019-2024) trend and pre/post-event comparison | Scale and robustness |
 | Medium | Geographic and network views (map of airport delay, hub-and-spoke flow graph); UTC-normalised time analysis | Insight on spatial propagation |
-| Low | Streamlit/Dash dashboard; Prefect/Airflow scheduling; data validation with Great Expectations/Pandera; data versioning (DVC) | Production operations |
+| Low | Dashboard extras (what-if planner, saved views, auth); Prefect/Airflow scheduling; data validation with Great Expectations/Pandera; data versioning (DVC) | Production operations |
 | Low | Passenger-weighted metrics (T-100 / DB1B) | Customer-centric KPIs |
 
 ---
@@ -205,6 +205,7 @@ The new pipeline normalises `2400` → `0`, so no imputation is needed on this d
 pip install -e ".[dev]"
 # place the CSV at data/raw/flight_random_1million.csv
 python scripts/run_pipeline.py      # ~25 s on 1M rows
-pytest                              # 26 tests
+pytest                              # 31 tests
+streamlit run app/streamlit_app.py         # interactive dashboard
 ```
 Outputs: `reports/insights.md` · `reports/tables/` · `reports/figures/` · `reports/data_quality_report.json`
